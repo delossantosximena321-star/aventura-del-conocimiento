@@ -1,186 +1,142 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Aventura del Conocimiento</title>
+<title>Aventura del Conocimiento</title>
 
 <style>
 body{
-margin:0;
-font-family:'Trebuchet MS', sans-serif;
-background: radial-gradient(circle at top,#0f2027,#203a43,#2c5364);
-color:white;
-text-align:center;
-overflow:hidden;
+  margin:0;
+  font-family: Arial;
+  background: linear-gradient(270deg, #1e3c72, #2a5298);
+  background-size: 400% 400%;
+  animation: fondo 10s infinite alternate;
+  color:white;
+  text-align:center;
 }
 
-.screen{
-display:none;
-padding:20px;
-animation:fade 0.6s ease-in-out;
+@keyframes fondo{
+  0%{background-position:left;}
+  100%{background-position:right;}
 }
 
-@keyframes fade{
-from{opacity:0;transform:scale(0.95);}
-to{opacity:1;transform:scale(1);}
-}
-
-h1{
-font-size:32px;
-text-shadow:0 0 15px cyan;
+.container{
+  margin-top:60px;
 }
 
 button{
-padding:12px;
-margin:10px;
-width:85%;
-border:none;
-border-radius:10px;
-font-size:16px;
-cursor:pointer;
-transition:0.3s;
-background:#00c6ff;
-color:white;
-box-shadow:0 0 10px #00c6ff;
+  display:block;
+  margin:10px auto;
+  padding:12px 25px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+  background:#00c6ff;
+  color:white;
+  transition:0.3s;
 }
 
 button:hover{
-transform:scale(1.05);
-box-shadow:0 0 20px #00c6ff;
+  background:#0072ff;
+  transform:scale(1.1);
 }
 
-.correct{background:#00ff88 !important;}
-.wrong{background:#ff4b5c !important;}
-
-#lifeBar{
-width:90%;
-height:15px;
-background:#444;
-margin:15px auto;
-border-radius:10px;
-overflow:hidden;
-}
-
-#life{
-height:100%;
-width:100%;
-background:#00ff88;
-transition:0.4s;
-}
-
-#score{
-font-size:18px;
-margin-top:10px;
-}
-
-.worldTitle{
-font-size:20px;
-color:#ffd700;
-margin-bottom:10px;
+#resultado{
+  font-size:22px;
+  margin-top:20px;
 }
 </style>
 </head>
+
 <body>
 
-<audio id="bgMusic" loop>
-<source src="https://cdn.pixabay.com/audio/2022/03/15/audio_4b4e6a8a4e.mp3">
+<audio autoplay loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b41c3.mp3?filename=adventure-theme-110997.mp3" type="audio/mpeg">
 </audio>
 
-<audio id="correctSound">
-<source src="https://cdn.pixabay.com/audio/2022/03/10/audio_270cc0a7b3.mp3">
-</audio>
-
-<audio id="wrongSound">
-<source src="https://cdn.pixabay.com/audio/2022/03/15/audio_6b2f54e8f7.mp3">
-</audio>
-
-<!-- Pantalla Inicio -->
-<div id="start" class="screen" style="display:block;">
-<h1>🌎 La Aventura del Conocimiento</h1>
-<p>Conquista los 4 mundos y demuestra tu poder.</p>
-<button onclick="startGame()">🚀 COMENZAR AVENTURA</button>
-</div>
-
-<!-- Pantalla Juego -->
-<div id="game" class="screen">
-<div class="worldTitle" id="world"></div>
-<h2 id="question"></h2>
-<div id="answers"></div>
-
-<div id="lifeBar"><div id="life"></div></div>
-<div id="score">Puntaje: 0</div>
-</div>
-
-<!-- Pantalla Final -->
-<div id="end" class="screen">
-<h1>👑 ¡MISIÓN COMPLETADA!</h1>
-<h2 id="finalScore"></h2>
-<button onclick="location.reload()">🔄 Jugar otra vez</button>
+<div class="container">
+<h1>🎮 Aventura del Conocimiento</h1>
+<h2 id="pregunta"></h2>
+<div id="opciones"></div>
+<p id="resultado"></p>
 </div>
 
 <script>
-const questions=[
-{world:"🏰 Reino de los Números",q:"3x + 5 = 20 ¿x?",a:["3","5","7","15"],c:1},
-{world:"🏰 Reino de los Números",q:"25% de 200",a:["25","50","75","100"],c:1},
-{world:"🌳 Bosque de las Ideas",q:"Constante significa:",a:["Rápido","Difícil","Persistente","Innecesario"],c:2},
-{world:"✍️ Ciudad de las Palabras",q:"Los alumnos ____ el examen mañana.",a:["presentan","presentaran","presentarán","presentarón"],c:2},
-{world:"🏛️ Templo del Lenguaje",q:"¿Qué es un verbo?",a:["Acción","Lugar","Cosa","Persona"],c:0}
+let preguntas = [
+{
+pregunta:"¿Capital de México?",
+opciones:["Guadalajara","Monterrey","Ciudad de México","Puebla"],
+correcta:2
+},
+{
+pregunta:"¿Cuánto es 8 x 7?",
+opciones:["54","56","64","48"],
+correcta:1
+},
+{
+pregunta:"¿Quién descubrió América?",
+opciones:["Colón","Newton","Einstein","Darwin"],
+correcta:0
+},
+{
+pregunta:"¿Planeta rojo?",
+opciones:["Venus","Marte","Júpiter","Saturno"],
+correcta:1
+},
+{
+pregunta:"¿Resultado de 9+6?",
+opciones:["14","15","16","13"],
+correcta:1
+},
+{
+pregunta:"¿Animal más rápido?",
+opciones:["León","Tigre","Guepardo","Lobo"],
+correcta:2
+},
+{
+pregunta:"¿Lenguaje de esta página?",
+opciones:["Python","HTML","Java","C++"],
+correcta:1
+},
+{
+pregunta:"¿Océano más grande?",
+opciones:["Atlántico","Pacífico","Índico","Ártico"],
+correcta:1
+}
 ];
 
-let current=0;
-let score=0;
-let life=100;
+let actual = 0;
 
-function startGame(){
-document.getElementById("start").style.display="none";
-document.getElementById("game").style.display="block";
-document.getElementById("bgMusic").play();
-loadQuestion();
-}
-
-function loadQuestion(){
-let q=questions[current];
-document.getElementById("world").innerText=q.world;
-document.getElementById("question").innerText=q.q;
-let answersDiv=document.getElementById("answers");
-answersDiv.innerHTML="";
-q.a.forEach((ans,i)=>{
-let btn=document.createElement("button");
-btn.innerText=ans;
-btn.onclick=()=>checkAnswer(i,btn);
-answersDiv.appendChild(btn);
+function mostrarPregunta(){
+document.getElementById("resultado").innerHTML="";
+let p = preguntas[actual];
+document.getElementById("pregunta").innerHTML = p.pregunta;
+let opcionesHTML="";
+p.opciones.forEach((op,i)=>{
+opcionesHTML+=`<button onclick="verificar(${i})">${op}</button>`;
 });
+document.getElementById("opciones").innerHTML = opcionesHTML;
 }
 
-function checkAnswer(i,btn){
-if(i===questions[current].c){
-btn.classList.add("correct");
-document.getElementById("correctSound").play();
-score+=10;
+function verificar(i){
+if(i===preguntas[actual].correcta){
+document.getElementById("resultado").innerHTML="✅ Correcto!";
 }else{
-btn.classList.add("wrong");
-document.getElementById("wrongSound").play();
-life-=20;
-document.getElementById("life").style.width=life+"%";
-if(life<=0){endGame();return;}
-}
-document.getElementById("score").innerText="Puntaje: "+score;
-setTimeout(()=>{
-current++;
-if(current<questions.length){
-loadQuestion();
-}else{
-endGame();
-}
-},800);
+document.getElementById("resultado").innerHTML="❌ Incorrecto!";
 }
 
-function endGame(){
-document.getElementById("game").style.display="none";
-document.getElementById("end").style.display="block";
-document.getElementById("finalScore").innerText="Puntaje Final: "+score;
+actual++;
+
+if(actual<preguntas.length){
+setTimeout(mostrarPregunta,1000);
+}else{
+document.getElementById("pregunta").innerHTML="🏆 ¡Juego terminado!";
+document.getElementById("opciones").innerHTML="";
 }
+}
+
+mostrarPregunta();
 </script>
 
 </body>
